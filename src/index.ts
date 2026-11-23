@@ -16,7 +16,7 @@ const PORT = process.env.PORT;
 
 if (isNaN(Number(PORT))) {
     console.log("PORT에 오류가 존재합니다.");
-    // 프로그램 종요 코드
+    // 프로그램 중요 코드
     process.exit(1);
 }
 
