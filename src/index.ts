@@ -8,6 +8,18 @@ dotenv.config();
 // 백앤드를 구성하는 express 패키지를 이용해 앱 만들기
 const app = express();
 
+// express 앱에 기능을 확장할 때에는 app.use()메서드를 사용해서 확장함
+
+// express.json() : 요청(Request)의 본문(body)에 담긴 내용(JSON 데이터)을 객체로 변환(파싱)하여 request.body에 저장
+//              프론트엔드에서 요청이 오는 것도 string으로 옴. 그래서 객체로 변환해야되는데 그걸 express는 자동으로
+//              대문에 설치하면 매 번 써줄 필요없이 해줌 => 경비원이 번역기를 갖고 있음
+app.use(express.json());
+
+// express.urlencoded({ extended: true })
+// 요청(Request)의 본문(body)에 담긴 URL-encoded 데이터를 객채로 변환(파싱)하여 request.body에 저장
+// URL은 한글을 원래 포함할 수 없기 때문에 변환을 하게 되는데 ,그것을 한글로 받아들일 수 있게 하는 기능
+app.use(express.urlencoded({ extended: true }));
+
 // 환경 변수 중 key가 PORT인 값을 가져오되,
 // 프로그램을 실행한 입장에서 PORT는 있을 수도 있고 없을 수도 있는 상황
 // PORT라는 환경변수는 프로그램에 포함된게 아니라 .env라는.
