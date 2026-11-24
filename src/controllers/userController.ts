@@ -1,7 +1,7 @@
 import { type Request, type Response } from "express";
-import { User } from "../generated/prisma/client.ts";
 import userService from "../services/userService.ts";
 import { UserCreateInput } from "../generated/prisma/models/User.ts";
+import passwordUtility from "../utils/password/passwordUtility.ts";
 
 // userController 라는 이름의 "user"는
 // 경로 상에서 /user로 시작되는 요청이 들어오게 되는 곳이라서 userController임
@@ -25,7 +25,7 @@ const createUser = async (req: Request, res: Response) => {
         // 3-0. 데이터베이스에게 보내 줄, 'User 테이블에 추가"할" 테이터'를 만들어줌
         const newUser: UserCreateInput = {
             username:username,
-            password:password,
+            password: await passwordUtility.hashPassword(password),
             nickname:nickname,
             email:email,
             phoneNumber: phoneNumber,
