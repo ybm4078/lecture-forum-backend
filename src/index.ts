@@ -1,5 +1,5 @@
 import express from 'express';
-import  dotenv from 'dotenv';
+import dotenv from 'dotenv';
 import userRouter from "./routes/userRouter.ts";
 
 // 환경설정 파일을 불러오는 도구가 필요함 => 그래서 설치한게 dotenv 패키지
