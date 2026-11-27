@@ -36,6 +36,16 @@ const createUser = async (data: UserCreateInput) => {
     });
 };
 
+const getUserByUsername = async (username:string) => {
+    // 사용하는 측에서 제공한 username을 가지고 User 정보를 검색해서 돌려줘야 함 => SELECT
+    // findUnique : 유일한 칼럼값을 가지고 1개 데이터에 대해 검색을 해올 떄 사용할 수 있는 메서드
+    const user = await prisma.user.findUnique({
+        where: {username:username}
+    });
+    return user;
+}
+
 export default {
     createUser,
+    getUserByUsername,
 };
