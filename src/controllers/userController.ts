@@ -3,6 +3,7 @@ import userService from "../services/userService.ts";
 import { UserCreateInput } from "../generated/prisma/models/User.ts";
 import passwordUtility from "../utils/password/passwordUtility.ts";
 import {CreateUserInputType} from "../schemas/user/createUser.ts";
+import { Prisma } from "../generated/prisma/client.ts";
 
 // userController 라는 이름의 "user"는
 // 경로 상에서 /user로 시작되는 요청이 들어오게 되는 곳이라서 userController임
@@ -39,14 +40,38 @@ const createUser = async (req: Request, res: Response) => {
 
         // 3-1. 테이터베이스에게 newUser 내용을 저장하도록 요청
         //      데이터베이스와 통신을 하는 일을 할 service도, 내부에서 일이 끝날 때 까지 기다려야 함
-        const result = await userService.createUser(newUser);
+
+        // 위에서 이미 password라는 이름의 변수를 쓰고 있음
+        // 구조분해할당을 할려고 하는데 -> 그래서 객체 안의 key 이름을 변수명으로 써서 구조분해할당 해야되는데
+        //                            이미 쓰고 있는 상황이라 불가능함
+        //                            ' 이름을 바꿔서 쓰겠다'라고 password: 변수명 을 쓸 수 있음
+        const { password:_, ...etc} = await userService.createUser(newUser);
 
         // 4. 회원 가입에 됐다는 내용으로 택배를 보내고
         // 여기서부터는 응답(Response) 처리
         // res라는, 앞으로 응답에 나갈 박스에
         // result 결과를 json으로 가공하여 넣음
-        res.status(201).json(result);
+        res.status(201).json(etc);
     } catch (error) {
+        // try를 실행할 때 어디서든지 에러날 경우, catch 절이 실행이 됨
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            // Prisma error 객체 내부에 code 항목 값이 "P2002"인 것은
+            // 중복값이 있을 때의 에러코드임
+            if (error.code === "P2002") {
+                const errorMessage = error.message;
+
+                if (errorMessage.includes("username")) {
+                    res.status(409).json({ message: "이미 사용 중인 아이디입니다." });
+                }
+                if (errorMessage.includes("nickname")) {
+                    res.status(409).json({ message: "이미 사용 중인 닉네임입니다." });
+                }
+                if (errorMessage.includes("email")) {
+                    res.status(409).json({ message: "이미 사용 중인 이메일입니다." });
+                }
+            }
+        }
+
         console.log(error);
         res.status(500).json({message: "유저 생성 중 오류가 발생하였습니다"});
     }
