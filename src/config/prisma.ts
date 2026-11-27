@@ -7,7 +7,7 @@
 // "prisma"라는 패키지는 schema.prisma를 가지고 파일 생성과 관련을 지으며,
 // "@prisma/client" 패키지는 express에서 prisma로 통신할 수 있게 해주는 패키지
 
-
+import "dotenv/config"
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import { PrismaClient } from "../generated/prisma/client.ts";
 
@@ -15,12 +15,12 @@ import { PrismaClient } from "../generated/prisma/client.ts";
 // 환경변수에서 가져온 값은 string | undefined 타입이기 때문에
 // 논리합을 통해 값이 없을 경우 빈 string을 넣도록 조치
 const adapter = new PrismaMariaDb({
-    host: process.env.PRISMA_HOST || "",
-    port: Number(process.env.DATABASE_PORT),
-    user: process.env.PRISMA_USERNAME || "",
-    password: process.env.PRISMA_PASSWORD|| "",
-    database: process.env.PRISMA_NAME|| "",
-    connectionLimit: 5,     // 동시 처리량
+    host: process.env.DATABASE_HOST || "",
+    port: Number(process.env.DATABASE_PORT) || 3306,
+    user: process.env.DATABASE_USERNAME || "",
+    password: process.env.DATABASE_PASSWORD || "",
+    database: process.env.DATABASE_NAME || "",
+    connectionLimit: 5, // 동시 처리량
 });
 
 const prisma = new PrismaClient({ adapter });

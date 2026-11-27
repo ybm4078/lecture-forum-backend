@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from "cors";
 import userRouter from "./routes/userRouter.ts";
 
 // 환경설정 파일을 불러오는 도구가 필요함 => 그래서 설치한게 dotenv 패키지
@@ -21,6 +22,10 @@ app.use(express.json());
 // URL은 한글을 원래 포함할 수 없기 때문에 변환을 하게 되는데 ,그것을 한글로 받아들일 수 있게 하는 기능
 app.use(express.urlencoded({ extended: true }));
 
+// 교차 출저 리소스 공유 (CORS)를 허용하는건 백엔드에서 증명하여 허용해야 함 -> cors(옵션)
+// cors() 만 사용하면 모든 프론트엔드 주소에서 요청이 들어오는 걸 허용 증명을 하는 것
+// cors({ origin: "주소" }) 를 통헤 특정 주소에 대해서만 허용 증명을 할 수 있음
+app.use(cors({origin: "http://localhost:5173", credentials: true}));
 
 // 이 앱에 Request가 들어올 때의 경로를 읽어서
 // 첫번쨰 매개변수의 값인 '/user'로 시작하면. 두번째 매개변수의 파일로 Routing시킴
